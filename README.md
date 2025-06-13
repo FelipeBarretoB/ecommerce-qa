@@ -21,16 +21,18 @@ You can view the latest test report at:
 ## JMeter Workflow Pipeline
 
 ```mermaid
-flowchart TD
-    A(Start: Push to main / Manual / Schedule)
-    B(Checkout repository)
-    C(Install git: apk add --no-cache git)
-    D(Run JMeter test: jmeter -n -t tests/testing_api.jmx -l results/result.jtl)
-    E(Generate JMeter HTML Report: jmeter -g results/result.jtl -o results/html-report)
-    F(Deploy HTML report to GitHub Pages)
-    G(End)
+sequenceDiagram
+    participant GitHub as GitHub Actions
+    participant Runner as Workflow Runner
+    participant JMeter as JMeter
+    participant Pages as GitHub Pages
 
-    A --> B --> C --> D --> E --> F --> G
+    GitHub->>Runner: Trigger (Push / Manual / Schedule)
+    Runner->>Runner: Checkout repository
+    Runner->>Runner: Install git (apk add --no-cache git)
+    Runner->>JMeter: Run JMeter test (jmeter -n -t tests/testing_api.jmx -l results/result.jtl)
+    Runner->>JMeter: Generate HTML Report (jmeter -g results/result.jtl -o results/html-report)
+    Runner->>Pages: Deploy HTML report to GitHub Pages
 ```
 
 
