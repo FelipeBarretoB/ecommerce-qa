@@ -1,0 +1,27 @@
+name: JMeter Test
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+  schedule:
+    - cron: '0 2 * * *'
+
+jobs:
+  jmeter:
+    runs-on: ubuntu-latest
+    container:
+      image: justb4/jmeter:5.6.3
+    steps:
+      - uses: actions/checkout@v3
+      - name: Run JMeter test
+        run: |
+          jmeter -n -t tests/testing_api.jmx -l results/result.jtl
+      - name: Generate JMeter HTML Report
+        run: |
+          jmeter -g results/result.jtl -o results/html-report
+      - name: Deploy HTML report to GitHub Pages
+        uses: peaceiris/actions-gh-pages@v4
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: results/html-report
